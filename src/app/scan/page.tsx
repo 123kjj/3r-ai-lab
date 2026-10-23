@@ -57,7 +57,11 @@ export default function ScanPage() {
   const handleTookAction = useCallback(
     async (kg?: number) => {
       if (!result) return;
-      await recordAction(result, kg);
+      try {
+        await recordAction(result, kg);
+      } catch (e) {
+        console.error(e);
+      }
       setActionTaken(true);
     },
     [result, recordAction]

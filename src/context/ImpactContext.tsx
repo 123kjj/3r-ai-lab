@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   ReactNode,
   useCallback,
 } from "react";
@@ -27,6 +28,21 @@ import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
 import { AnalyzeItemResult, ImpactStats, UserAction } from "@/lib/types";
 import { DEMO_IMPACT_STATS, DEMO_RECENT_ACTIONS } from "@/lib/mockData";
+
+const LOCAL_KEY = "3r-impact-local-v1";
+function loadLocal(): { stats: ImpactStats; actions: UserAction[] } | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+function saveLocal(stats: ImpactStats, actions: UserAction[]) {
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify({ stats, actions }));
+  } catch {}
+}
 
 interface ImpactContextValue {
   stats: ImpactStats;
@@ -51,12 +67,17 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
   const [stats, setStats] = useState<ImpactStats>(DEMO_IMPACT_STATS);
   const [actions, setActions] = useState<UserAction[]>(DEMO_RECENT_ACTIONS);
   const [loading, setLoading] = useState(false);
+  const statsRef = useRef(stats);
+  const actionsRef = useRef(actions);
+  statsRef.current = stats;
+  actionsRef.current = actions;
 
   // Reset to fresh local demo state whenever we drop back to demo mode
   useEffect(() => {
     if (isDemo) {
-      setStats(DEMO_IMPACT_STATS);
-      setActions(DEMO_RECENT_ACTIONS);
+      const saved = loadLocal();
+      setStats(saved?.stats ?? DEMO_IMPACT_STATS);
+      setActions(saved?.actions ?? DEMO_RECENT_ACTIONS);
     }
   }, [isDemo]);
 
@@ -142,42 +163,53 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
         estimatedKgCO2e,
       };
 
+      const applyLocal = () => {
+        const nextActions = [newAction, ...actionsRef.current].slice(0, 10);
+        const p = statsRef.current;
+        const nextStats: ImpactStats = {
+          totalActions: p.totalActions + 1,
+          reusedCount: p.reusedCount + (result.bestAction === "reuse" ? 1 : 0),
+          recycledCount: p.recycledCount + (result.bestAction === "recycle" ? 1 : 0),
+          reducedCount: p.reducedCount + (result.bestAction === "reduce" ? 1 : 0),
+          challengeDay: Math.min(p.challengeDay + 1, 7),
+          estimatedKgCO2e: (p.estimatedKgCO2e ?? 0) + (estimatedKgCO2e ?? 0),
+        };
+        setActions(nextActions);
+        setStats(nextStats);
+        saveLocal(nextStats, nextActions);
+      };
+
       if (isDemo || !db || !user) {
-        // Demo mode: keep everything in local component state only.
-        setActions((prev) => [newAction, ...prev].slice(0, 10));
-        setStats((prev) => ({
-          totalActions: prev.totalActions + 1,
-          reusedCount: prev.reusedCount + (result.bestAction === "reuse" ? 1 : 0),
-          recycledCount:
-            prev.recycledCount + (result.bestAction === "recycle" ? 1 : 0),
-          reducedCount: prev.reducedCount + (result.bestAction === "reduce" ? 1 : 0),
-          challengeDay: Math.min(prev.challengeDay + 1, 7),
-          estimatedKgCO2e: (prev.estimatedKgCO2e ?? 0) + (estimatedKgCO2e ?? 0),
-        }));
+        // Not signed in: keep progress in this browser (survives refresh).
+        applyLocal();
         return;
       }
 
-      const userRef = doc(db, "users", user.uid);
-      const fieldMap: Record<string, string> = {
-        reduce: "reducedCount",
-        reuse: "reusedCount",
-        recycle: "recycledCount",
-      };
-
-      await addDoc(collection(db, "users", user.uid, "actions"), {
-        itemName: result.itemName,
-        category: result.category,
-        action: result.bestAction,
-        explanation: result.explanation,
-        createdAt: serverTimestamp(),
-        ...(estimatedKgCO2e !== undefined ? { estimatedKgCO2e } : {}),
-      });
-
-      await updateDoc(userRef, {
-        totalActions: increment(1),
-        [fieldMap[result.bestAction]]: increment(1),
-        ...(estimatedKgCO2e !== undefined ? { estimatedKgCO2e: increment(estimatedKgCO2e) } : {}),
-      });
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const fieldMap: Record<string, string> = {
+          reduce: "reducedCount",
+          reuse: "reusedCount",
+          recycle: "recycledCount",
+        };
+        await addDoc(collection(db, "users", user.uid, "actions"), {
+          itemName: result.itemName,
+          category: result.category,
+          action: result.bestAction,
+          explanation: result.explanation,
+          createdAt: serverTimestamp(),
+          ...(estimatedKgCO2e !== undefined ? { estimatedKgCO2e } : {}),
+        });
+        await updateDoc(userRef, {
+          totalActions: increment(1),
+          [fieldMap[result.bestAction]]: increment(1),
+          ...(estimatedKgCO2e !== undefined ? { estimatedKgCO2e: increment(estimatedKgCO2e) } : {}),
+        });
+      } catch (err) {
+        // Cloud save failed (rules, network). Don't lose the progress: keep it in this browser.
+        console.error("Saving to the cloud failed; saved locally instead:", err);
+        applyLocal();
+      }
     },
     [isDemo, user]
   );
