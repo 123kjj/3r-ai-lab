@@ -18,6 +18,11 @@ export interface AnalyzeItemResult {
   isFallback?: boolean;
   /** true when the person picked the material themselves (not AI-identified) */
   manualSelection?: boolean;
+  /** Rule ids (rules.ts) that explain this result; first is the headline. */
+  ruleIds?: string[];
+  /** Where it goes: recycle, compost, reuse, dropoff or trash. */
+  disposition?: "recycle" | "compost" | "reuse" | "dropoff" | "trash";
+  craftId?: string;
   /**
    * Follow-up questions the Material Detective wants answered before it
    * can give a confident scenario comparison (e.g. "is it empty?",

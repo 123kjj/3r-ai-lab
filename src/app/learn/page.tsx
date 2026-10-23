@@ -1,5 +1,4 @@
 import { LearnSection } from "@/components/LearnSection";
-import { ReuseIdeaPicker } from "@/components/ReuseIdeaPicker";
 
 export default function LearnPage() {
   return (
@@ -46,7 +45,6 @@ export default function LearnPage() {
         note="Recycling rules vary by location — what's accepted curbside in one city may need drop-off in another. Always check with your local program."
       />
 
-      <ReuseIdeaPicker />
     </div>
   );
 }

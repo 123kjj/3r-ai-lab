@@ -5,8 +5,8 @@ import { AchievementBadge } from "@/components/AchievementBadge";
 import { RecentActionItem } from "@/components/RecentActionItem";
 import { useImpact } from "@/context/ImpactContext";
 import { useAuth } from "@/context/AuthContext";
-import { ACHIEVEMENTS } from "@/lib/mockData";
 import { LinkButton } from "@/components/Button";
+import { BadgeShelf } from "@/components/BadgeShelf";
 
 export default function ImpactPage() {
   const { stats, actions, isDemo } = useImpact();
@@ -65,6 +65,8 @@ export default function ImpactPage() {
         </p>
       </div>
 
+      <BadgeShelf />
+
       {/* Journey */}
       <section className="mt-10">
         <h2 className="font-serif text-xl font-semibold text-forest-900">
@@ -92,18 +94,6 @@ export default function ImpactPage() {
         </div>
       </section>
 
-      {/* Achievements */}
-      <section className="mt-10">
-        <h2 className="font-serif text-xl font-semibold text-forest-900">
-          Achievements
-        </h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {ACHIEVEMENTS.map((a) => (
-            <AchievementBadge key={a.id} achievement={a} stats={stats} />
-          ))}
-        </div>
-      </section>
-
       {/* Recent actions */}
       <section className="mt-10 pb-8">
         <h2 className="font-serif text-xl font-semibold text-forest-900">
@@ -113,10 +103,10 @@ export default function ImpactPage() {
           {actions.length === 0 ? (
             <div className="py-8 text-center">
               <p className="text-sm text-ink/60">
-                No actions yet — scan your first item to start your journey.
+                No actions yet — check your first item to start your journey.
               </p>
               <LinkButton href="/scan" variant="secondary" size="md" className="mt-4">
-                Scan an Item
+                Check an Item
               </LinkButton>
             </div>
           ) : (

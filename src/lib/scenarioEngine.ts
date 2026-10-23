@@ -1,3 +1,4 @@
+import { lookupItem } from "./itemLibrary";
 import {
   EvidenceQuality,
   FollowUpAnswers,
@@ -106,6 +107,10 @@ export function classifyMaterial(
   category: string,
   itemName: string
 ): { id: ExtendedCategoryId; matchedKeyword: string | null } {
+  // Hand-written item library wins: it knows exactly what the item is.
+  const known = lookupItem(itemName);
+  if (known) return { id: known.material, matchedKeyword: known.names[0] };
+
   const item = itemName.toLowerCase();
   const cat = category.toLowerCase();
 
@@ -212,7 +217,7 @@ const GUIDANCE: Record<ExtendedCategoryId, CategoryGuidance> = {
     recycle: {
       headline: "Recycle if reuse isn't practical",
       practicalNextStep: "Rinse and remove the lid (metal lids are often sorted separately). Check locally — some areas require drop-off instead of curbside.",
-      benefits: ["Glass is infinitely recyclable without quality loss."],
+      benefits: ["Glass can be recycled repeatedly."],
       tradeoffs: [
         "Glass's sourced emissions-reduction figure is modest — about 1/30th of aluminum's — because virgin glass production isn't as energy-intensive to begin with.",
         "A meaningful number of municipal programs don't accept glass curbside at all.",

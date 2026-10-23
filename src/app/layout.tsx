@@ -31,7 +31,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "3R-AI: Material Afterlife Lab",
   description:
-    "An evidence-based material intelligence platform: photograph an everyday object and explore its realistic reuse, recycling, and disposal futures, backed by sourced EPA data.",
+    "An evidence-based material intelligence platform: check an everyday item and compare its realistic reuse, recycling and disposal futures, backed by sourced EPA data.",
 };
 
 export const viewport: Viewport = {

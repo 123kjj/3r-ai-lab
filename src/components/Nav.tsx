@@ -5,13 +5,15 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { useAuth } from "@/context/AuthContext";
 
-const NAV_ITEMS = [
+type NavItem = { href: string; label: string; full?: string; icon: ({ className }: { className?: string }) => JSX.Element; desktopOnly?: boolean };
+const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/problem", label: "The Problem", icon: LearnIcon },
-  { href: "/scan", label: "Material Detective", icon: ScanIcon },
-  { href: "/impact", label: "My Impact", icon: ImpactIcon },
-  { href: "/learn", label: "Learn", icon: LearnIcon },
-  { href: "/methodology", label: "Methodology", icon: LearnIcon },
+  { href: "/problem", label: "Problem", full: "The Problem", icon: LearnIcon },
+  { href: "/scan", label: "Check", full: "Check an Item", icon: ScanIcon },
+  { href: "/play", label: "Play", icon: ScanIcon },
+  { href: "/quiz", label: "Quiz", icon: LearnIcon },
+  { href: "/impact", label: "Impact", full: "My Impact", icon: ImpactIcon },
+  { href: "/methodology", label: "Methodology", icon: LearnIcon, desktopOnly: true },
 ];
 
 export function Nav() {
@@ -40,7 +42,7 @@ export function Nav() {
                   }`}
                   aria-current={active ? "page" : undefined}
                 >
-                  {item.label}
+                  {item.full ?? item.label}
                 </Link>
               );
             })}
@@ -78,7 +80,7 @@ export function Nav() {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="mx-auto flex max-w-md items-stretch justify-between px-2 py-1.5">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.filter((i) => !i.desktopOnly).map((item) => {
             const active = pathname === item.href;
             const Icon = item.icon;
             return (

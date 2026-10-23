@@ -8,6 +8,8 @@ import { ReuseIdeas } from "./ReuseIdeas";
 import { ScenarioComparison } from "./ScenarioComparison";
 import { LearningReceiptCard } from "./LearningReceiptCard";
 import { ImpactEstimator } from "./ImpactEstimator";
+import { CraftCard } from "./CraftCard";
+import { RULES_BY_ID } from "@/lib/rules";
 import { buildThreeFutureScenarios } from "@/lib/scenarioEngine";
 import { generateLearningReceipt } from "@/lib/receiptGenerator";
 
@@ -56,11 +58,10 @@ export function ResultView({
     return (
       <div className="mx-auto max-w-lg border border-charcoal-200 bg-paper-50 p-8 text-center">
         <h2 className="font-serif text-2xl font-semibold text-forest-900">
-          We&rsquo;re not confident what this item is.
+          Tell us what the item is.
         </h2>
         <p className="mt-2 text-sm text-charcoal-600">
-          A photo alone doesn&rsquo;t always show enough — invisible coatings, mixed materials,
-          and contamination can&rsquo;t be read from an image. Describe it in a few words instead.
+          Describe it in a few words.
         </p>
         <form
           className="mt-5 flex flex-col gap-3 sm:flex-row"
@@ -88,7 +89,7 @@ export function ResultView({
           onClick={onScanAnother}
           className="mt-4 text-sm text-charcoal-500 underline decoration-charcoal-300 underline-offset-2 hover:text-forest-700"
         >
-          Try a different photo instead
+          Start over
         </button>
       </div>
     );
@@ -101,7 +102,7 @@ export function ResultView({
         <h2 className="font-serif text-3xl font-semibold text-forest-900">{effectiveItem}</h2>
         <p className="mt-1 text-sm text-charcoal-500">{effectiveCategory}</p>
         {result.manualSelection ? (
-          <p className="mt-2 font-mono text-xs text-charcoal-400">You selected this material yourself; it was not identified from a photo.</p>
+          <p className="mt-2 font-mono text-xs text-charcoal-400">You described this item yourself; guidance is general and category-level.</p>
         ) : typeof result.confidence === "number" && (
           <p className="mt-2 font-mono text-xs text-charcoal-400">
             {Math.round(result.confidence * 100)}% confidence — an honest estimate, not a
@@ -142,12 +143,36 @@ export function ResultView({
         )}
         {applied && (
           <p className="mt-2 text-xs italic text-soil-700">
-            Manually corrected from the AI&rsquo;s original guess.
+            Manually corrected.
           </p>
         )}
       </div>
 
+      {result.disposition && <DispositionBanner disp={result.disposition} />}
+
+      {result.ruleIds && result.ruleIds.length > 0 && (
+        <section className="border-2 border-forest-700 bg-forest-50 p-5" aria-label="The rule to remember">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-forest-700">Rule to remember</p>
+          <p className="mt-1 font-serif text-2xl font-semibold text-forest-900">
+            {RULES_BY_ID[result.ruleIds[0]]?.title}
+          </p>
+          <p className="mt-1 text-sm text-charcoal-700">{RULES_BY_ID[result.ruleIds[0]]?.text}</p>
+          {result.ruleIds.length > 1 && (
+            <ul className="mt-3 space-y-1 text-sm text-charcoal-700">
+              {result.ruleIds.slice(1).map((id) => RULES_BY_ID[id] && (
+                <li key={id}><strong>{RULES_BY_ID[id].title}.</strong> {RULES_BY_ID[id].text}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
       <ScenarioComparison data={scenarios} />
+
+      <section className="border border-forest-200 bg-forest-50 p-5">
+        <h3 className="font-serif text-xl font-semibold text-forest-900">Avoid it next time</h3>
+        <p className="mt-1 text-sm text-charcoal-700">{result.reduceAdvice}</p>
+      </section>
 
       <ImpactEstimator category={effectiveCategory} itemName={effectiveItem} onEstimate={setEstimateKg} />
 
@@ -156,6 +181,8 @@ export function ResultView({
         item={effectiveItem}
         category={effectiveCategory}
       />
+
+      {result.craftId && <CraftCard craftId={result.craftId} />}
 
       <ReuseIdeas ideas={result.reuseIdeas} />
 
@@ -166,9 +193,28 @@ export function ResultView({
           {actionTaken ? "Action saved" : "I Took Action"}
         </Button>
         <Button variant="secondary" size="lg" className="w-full sm:w-auto" onClick={onScanAnother}>
-          Scan Another Item
+          Check Another Item
         </Button>
       </div>
+    </div>
+  );
+}
+
+const DISP_STYLE: Record<string, { label: string; text: string; cls: string }> = {
+  recycle: { label: "Recycle it", text: "Goes in the recycling bin in most programs once it's empty.", cls: "border-forest-700 bg-forest-100 text-forest-900" },
+  compost: { label: "Compost it", text: "Goes in compost or food-scrap collection where available.", cls: "border-forest-600 bg-forest-50 text-forest-900" },
+  reuse: { label: "Reuse it first", text: "It still has life in it. Reuse, repair, donate, or craft, then recycle.", cls: "border-soil-500 bg-soil-50 text-soil-900" },
+  dropoff: { label: "Special drop-off", text: "Doesn't belong in any curbside bin. Use a drop-off or take-back.", cls: "border-orange-500 bg-orange-50 text-orange-900" },
+  trash: { label: "Trash (and next time, avoid it)", text: "Most programs can't recycle this. The best fix is using less of it.", cls: "border-charcoal-400 bg-charcoal-50 text-charcoal-900" },
+};
+
+function DispositionBanner({ disp }: { disp: string }) {
+  const d = DISP_STYLE[disp];
+  if (!d) return null;
+  return (
+    <div className={`border-l-8 p-4 ${d.cls}`} role="status">
+      <p className="font-serif text-2xl font-semibold">{d.label}</p>
+      <p className="mt-1 text-sm">{d.text} Rules vary by city.</p>
     </div>
   );
 }

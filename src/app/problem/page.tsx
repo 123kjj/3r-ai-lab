@@ -64,15 +64,15 @@ export default function ProblemPage() {
       <Section n="03" title="What current approaches miss">
         <ul className="list-disc space-y-2 pl-5">
           <li>City flyers and charts are generic: they don&rsquo;t answer &ldquo;what about <em>this</em> item?&rdquo;</li>
-          <li>&ldquo;Is it recyclable?&rdquo; AI tools tend to give a confident answer from a photo, hiding that grease, coatings and local rules change the answer.</li>
+          <li>Quick &ldquo;is it recyclable?&rdquo; answers hide that grease, coatings and local rules change the result.</li>
           <li>Almost none compare reuse vs. recycling vs. disposal side by side, or show how strong the evidence is.</li>
         </ul>
       </Section>
 
       <Section n="04" title="The solution: an honest decision aid">
         <p>
-          3R-AI identifies the item from a photo, then <strong>asks the questions a photo can&rsquo;t answer</strong> (is it
-          empty? greasy?). A transparent rules engine — not the AI — compares three futures: reuse,
+          You type an item and 3R-AI <strong>asks the questions that change the answer</strong> (is it
+          empty? greasy?). A transparent, tested rules engine compares three futures: reuse,
           recycle, dispose. Emission figures come only from EPA WARM; where no sourced figure exists,
           the app says so instead of inventing one. A Learning Receipt turns each decision into a
           lesson, and an optional weight input estimates the CO₂e difference versus landfilling.
@@ -82,8 +82,8 @@ export default function ProblemPage() {
       <Section n="05" title="Research & development">
         <p>
           We built the data layer from EPA WARM documentation (per-entry citations are in the code),
-          designed the rules engine to be deterministic and unit-tested (35 automated tests), and
-          kept AI to what it is good at: identifying objects. Bugs found by the tests (e.g. a
+          designed the rules engine to be deterministic and unit-tested (50+ automated tests), and
+          made every recommendation traceable to a rule or a source. Bugs found by the tests (e.g. a
           cardboard tube misclassified as corrugated, a carpet matching &ldquo;PET&rdquo;) were fixed and
           are now regression tests. See <Link className="underline" href="/methodology">Methodology</Link>.
         </p>
@@ -97,22 +97,31 @@ export default function ProblemPage() {
           impact yet and make no claim of it.
         </p>
         <p>
-          <strong>Feasibility:</strong> runs on a free-tier stack (Next.js, Vercel, Firebase, Gemini) with no hardware.
+          <strong>Feasibility:</strong> runs on a free-tier stack (Next.js, Vercel, Firebase) with no hardware.
           Next step: a school or classroom pilot, measuring decisions logged and reflection answers.
           City-specific rules can plug into the existing provider interface; no municipal partnership is claimed.
         </p>
       </Section>
 
-      <Section n="07" title="Limitations">
+      <Section n="07" title="Measured evidence: the instincts quiz">
+        <p>
+          To measure the problem rather than assume it, the app includes a short anonymous quiz where people
+          choose where 12 common items go. Aggregate results (how many people, how many got each item right)
+          are shown on <Link className="underline" href="/quiz/results">the results page</Link> exactly as collected, from a small
+          self-selected sample, so they illustrate the problem but are not a study.
+        </p>
+      </Section>
+
+      <Section n="08" title="Limitations">
         <ul className="list-disc space-y-2 pl-5">
-          <li>Vision AI can misidentify items; users can correct or choose the material manually.</li>
+          <li>Typed items are matched by keywords, so unusual items may not be recognized; the app says so rather than guessing.</li>
           <li>WARM figures are national averages and exclude reuse; textiles have no sourced figure here.</li>
           <li>Local recycling rules vary; the app gives general guidance and says when it can&rsquo;t verify local rules.</li>
         </ul>
       </Section>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <LinkButton href="/scan" size="lg" variant="primary">Try the Material Detective</LinkButton>
+        <LinkButton href="/scan" size="lg" variant="primary">Check an item</LinkButton>
         <LinkButton href="/methodology" size="lg" variant="secondary">Read the methodology</LinkButton>
       </div>
     </div>

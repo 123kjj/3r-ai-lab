@@ -26,7 +26,7 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero: problem first */}
-      <section className="border-b border-charcoal-200 px-6 pb-14 pt-14 sm:pt-20">
+      <section className="border-b border-charcoal-200 bg-gradient-to-b from-sky-100 via-paper to-paper px-6 pb-14 pt-14 sm:pt-20">
         <div className="mx-auto max-w-3xl">
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-charcoal-500">
             3R-AI · Material Afterlife Lab
@@ -37,11 +37,11 @@ export default function HomePage() {
           <p className="mt-4 max-w-2xl text-lg text-charcoal-600">
             Wrong end-of-life decisions at home — landfilling what could be composted or recycled,
             and contaminating what can&rsquo;t — add up. 3R-AI gives an honest, sourced answer for the
-            exact item in your hand: reuse, recycle or dispose, with the evidence quality shown.
+            item you're holding: reuse, recycle or dispose, with the evidence quality shown.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <LinkButton href="/scan" size="lg" variant="primary">Try the Material Detective</LinkButton>
-            <LinkButton href="/problem" size="lg" variant="secondary">The problem &amp; our approach</LinkButton>
+            <LinkButton href="/scan" size="lg" variant="primary">Check an item</LinkButton>
+            <LinkButton href="/play" size="lg" variant="secondary">Play Sort Rush</LinkButton>
           </div>
           <p className="mt-4 text-xs text-charcoal-500">
             Source: Recycling Partnership 2024 residential recycling report; EPA WARM for emissions

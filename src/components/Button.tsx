@@ -14,8 +14,8 @@ interface BaseProps {
 // or solid fill, and a simple color shift on hover rather than lift
 // shadows or glow — matches the field-journal/lab design direction.
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-forest-800 text-paper hover:bg-forest-900",
-  secondary: "bg-transparent text-forest-800 border border-forest-800 hover:bg-forest-50",
+  primary: "bg-forest-600 text-white shadow-[0_3px_0_0_#2D5323] hover:bg-forest-500 active:translate-y-[2px] active:shadow-[0_1px_0_0_#2D5323]",
+  secondary: "bg-white text-forest-800 border-2 border-forest-600 hover:bg-forest-50",
   ghost: "bg-transparent text-charcoal-600 hover:text-forest-800 underline decoration-charcoal-300 underline-offset-4",
 };
 
@@ -26,7 +26,7 @@ const SIZE_CLASSES: Record<Size, string> = {
 };
 
 function classes({ variant = "primary", size = "md", className = "" }: BaseProps) {
-  return `inline-flex items-center justify-center gap-2 font-sans font-medium tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-700 disabled:opacity-50 disabled:pointer-events-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`;
+  return `inline-flex items-center justify-center gap-2 rounded-lg font-sans font-semibold tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-700 disabled:opacity-50 disabled:pointer-events-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`;
 }
 
 export const Button = forwardRef<
