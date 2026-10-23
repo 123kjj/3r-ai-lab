@@ -22,26 +22,23 @@ export function FollowUpQuestions({ questions, onComplete, onSkip }: FollowUpQue
   const allAnswered = questions.every((q) => answers[q.id]);
 
   return (
-    <div className="mx-auto max-w-lg border border-charcoal-200 bg-paper-50 p-6">
-      <p className="font-serif text-lg font-semibold text-forest-900">A couple of quick questions</p>
-      <p className="mt-1 text-sm text-charcoal-600">
-        These answers could change which option we recommend.
-      </p>
+    <div className="mx-auto max-w-lg rounded-3xl border-4 border-sky-300 bg-white p-6 shadow-md">
+      <p className="font-serif text-2xl font-bold text-forest-700">🤔 Quick question!</p>
 
       <div className="mt-5 space-y-5">
         {questions.map((q) => (
           <fieldset key={q.id}>
-            <legend className="text-sm font-medium text-charcoal-800">{q.question}</legend>
+            <legend className="text-lg font-bold text-charcoal-800">{q.question}</legend>
             <div className="mt-2 flex flex-wrap gap-2">
               {q.options.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => setAnswers((prev) => ({ ...prev, [q.id]: opt.value }))}
-                  className={`border px-3 py-1.5 text-sm transition-colors ${
+                  className={`rounded-full border-2 px-4 py-2 text-base font-bold transition-colors ${
                     answers[q.id] === opt.value
-                      ? "border-forest-800 bg-forest-800 text-paper"
-                      : "border-charcoal-300 text-charcoal-700 hover:border-forest-600"
+                      ? "border-forest-600 bg-forest-500 text-white"
+                      : "border-charcoal-300 bg-white text-charcoal-700 hover:border-forest-500"
                   }`}
                 >
                   {opt.label}

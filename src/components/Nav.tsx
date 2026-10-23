@@ -5,15 +5,15 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { useAuth } from "@/context/AuthContext";
 
-type NavItem = { href: string; label: string; full?: string; icon: ({ className }: { className?: string }) => JSX.Element; desktopOnly?: boolean };
+type NavItem = { href: string; label: string; emoji: string; desktopOnly?: boolean };
 const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/problem", label: "Problem", full: "The Problem", icon: LearnIcon },
-  { href: "/scan", label: "Check", full: "Check an Item", icon: ScanIcon },
-  { href: "/play", label: "Play", icon: ScanIcon },
-  { href: "/quiz", label: "Quiz", icon: LearnIcon },
-  { href: "/impact", label: "Impact", full: "My Impact", icon: ImpactIcon },
-  { href: "/methodology", label: "Methodology", icon: LearnIcon, desktopOnly: true },
+  { href: "/", label: "Home", emoji: "🏠" },
+  { href: "/play", label: "Play", emoji: "🎮" },
+  { href: "/scan", label: "Check", emoji: "🔍" },
+  { href: "/quiz", label: "Quiz", emoji: "⭐" },
+  { href: "/impact", label: "Badges", emoji: "🏅" },
+  { href: "/problem", label: "Why it matters", emoji: "🌍", desktopOnly: true },
+  { href: "/methodology", label: "Sources", emoji: "📚", desktopOnly: true },
 ];
 
 export function Nav() {
@@ -42,7 +42,7 @@ export function Nav() {
                   }`}
                   aria-current={active ? "page" : undefined}
                 >
-                  {item.full ?? item.label}
+                  <span aria-hidden>{item.emoji}</span> {item.label}
                 </Link>
               );
             })}
@@ -76,65 +76,26 @@ export function Nav() {
       {/* Mobile bottom nav */}
       <nav
         aria-label="Main navigation"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-moss-100 bg-paper/95 backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t-4 border-forest-200 bg-white/95 backdrop-blur md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto flex max-w-md items-stretch justify-between px-2 py-1.5">
+        <div className="mx-auto flex max-w-md items-stretch justify-between px-1 py-1">
           {NAV_ITEMS.filter((i) => !i.desktopOnly).map((item) => {
             const active = pathname === item.href;
-            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-1 flex-col items-center gap-1 rounded-2xl px-2 py-1.5 text-[11px] font-medium"
                 aria-current={active ? "page" : undefined}
+                className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl px-1 py-1.5 text-[11px] font-bold ${active ? "bg-forest-100 text-forest-700" : "text-charcoal-500"}`}
               >
-                <Icon
-                  className={`h-6 w-6 transition-colors ${
-                    active ? "text-moss-700" : "text-ink/40"
-                  }`}
-                />
-                <span className={active ? "text-moss-800" : "text-ink/50"}>
-                  {item.label}
-                </span>
+                <span className={`text-2xl ${active ? "anim-bin-happy" : ""}`} aria-hidden>{item.emoji}</span>
+                {item.label}
               </Link>
             );
           })}
         </div>
       </nav>
     </>
-  );
-}
-
-function HomeIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path d="M4 11.5 12 4l8 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6 10v9a1 1 0 0 0 1 1h3v-5h4v5h3a1 1 0 0 0 1-1v-9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function ScanIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path d="M4 8V6a2 2 0 0 1 2-2h2M18 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M6 20H4a2 2 0 0 1-2-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  );
-}
-function ImpactIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path d="M4 20V11M12 20V4M20 20v-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function LearnIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
-      <path d="M12 6.5c-1.6-1.3-3.9-2-6.5-2v11c2.6 0 4.9.7 6.5 2 1.6-1.3 3.9-2 6.5-2v-11c-2.6 0-4.9.7-6.5 2Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 6.5v11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
   );
 }

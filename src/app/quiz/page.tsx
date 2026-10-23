@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button, LinkButton } from "@/components/Button";
 import { BIN_LABELS, BinChoice, QUIZ_ITEMS, scoreQuiz } from "@/lib/quiz";
+import { Buddy } from "@/components/Buddy";
 import { submitQuiz } from "@/lib/quizStore";
 import { recordEvent } from "@/lib/progress";
 
@@ -68,35 +69,27 @@ export default function QuizPage() {
     );
   }
 
+  const ICON: Record<BinChoice, string> = { recycling: "♻️", trash: "🗑️", compost: "🍃", dropoff: "⚡" };
+  const COLOR: Record<BinChoice, string> = { recycling: "#3B82C4", trash: "#6B7280", compost: "#4C9A52", dropoff: "#E8833A" };
   return (
-    <div className="mx-auto max-w-xl px-6 py-10">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-charcoal-500">
-        Question {step + 1} of {QUIZ_ITEMS.length}
-      </p>
-      <h1 className="mt-2 font-serif text-3xl font-semibold text-forest-900">Where does this go?</h1>
-      <p className="mt-4 text-xl text-charcoal-800">{item.name}</p>
-      <div className="mt-6 grid gap-3">
+    <div className="mx-auto max-w-xl px-6 py-8 pb-32 text-center">
+      <p className="font-mono text-sm font-bold text-charcoal-500">{step + 1} / {QUIZ_ITEMS.length}</p>
+      <div className="mx-auto mt-2 h-3 w-full max-w-xs overflow-hidden rounded-full bg-forest-100"><div className="h-3 rounded-full bg-forest-500 transition-all" style={{ width: `${(step / QUIZ_ITEMS.length) * 100}%` }} /></div>
+      <Buddy mood="think" className="mx-auto mt-4 w-20" />
+      <h1 className="mt-2 font-serif text-3xl font-bold text-forest-700">Where does it go?</h1>
+      <p className="anim-pop mt-3 rounded-3xl bg-white p-4 font-serif text-2xl font-bold text-charcoal-800 shadow-md">{item.name}</p>
+      <div className="mt-5 grid grid-cols-2 gap-3">
         {(Object.keys(BIN_LABELS) as BinChoice[]).map((c) => (
-          <button
-            key={c}
-            onClick={() => setPicked(c)}
-            aria-pressed={picked === c}
-            className={`border px-4 py-3 text-left text-sm ${
-              picked === c ? "border-forest-800 bg-forest-50 text-forest-900" : "border-charcoal-300 bg-white text-charcoal-800 hover:border-forest-700"
-            }`}
-          >
-            {BIN_LABELS[c]}
+          <button key={c} onClick={() => setPicked(c)} aria-pressed={picked === c}
+            className={`tilt-card rounded-2xl border-4 px-3 py-4 text-white ${picked === c ? "border-charcoal-900 ring-4 ring-amber-300" : "border-charcoal-900/30"}`}
+            style={{ backgroundColor: COLOR[c] }}>
+            <span className="block text-4xl" aria-hidden>{ICON[c]}</span>
+            <span className="text-sm font-extrabold uppercase tracking-wide">{BIN_LABELS[c]}</span>
           </button>
         ))}
       </div>
-      <div className="mt-6">
-        <Button variant="primary" onClick={next} disabled={!picked}>
-          {step + 1 === QUIZ_ITEMS.length ? "See results" : "Next"}
-        </Button>
-      </div>
-      <p className="mt-6 text-xs text-charcoal-500">
-        Anonymous. <Link href="/problem" className="underline">Why this matters</Link>
-      </p>
+      <div className="mt-6"><Button variant="primary" size="lg" onClick={next} disabled={!picked}>{step + 1 === QUIZ_ITEMS.length ? "See results 🎉" : "Next →"}</Button></div>
+      <p className="mt-6 text-xs text-charcoal-500">Anonymous · <Link href="/problem" className="underline">Why this matters</Link></p>
     </div>
   );
 }

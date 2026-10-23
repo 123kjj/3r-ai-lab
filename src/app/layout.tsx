@@ -1,23 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { AuthProvider } from "@/context/AuthContext";
 import { ImpactProvider } from "@/context/ImpactContext";
 
 // Editorial serif for major headings — distinctive, field-journal feel.
-const serif = Fraunces({
+const serif = Fredoka({
   subsets: ["latin"],
   variable: "--font-serif",
   weight: ["500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 // Clean sans for interface text and body copy.
-const sans = Inter({
+const sans = Nunito({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700", "800"],
 });
 
 // Monospace for data/figures (emissions values, units) — gives the
@@ -29,7 +28,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "3R-AI: Material Afterlife Lab",
+  title: "3R-AI: Sort, Learn, Reuse",
   description:
     "An evidence-based material intelligence platform: check an everyday item and compare its realistic reuse, recycling and disposal futures, backed by sourced EPA data.",
 };
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FBF8F1",
+  themeColor: "#E8F6FF",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

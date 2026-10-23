@@ -11,6 +11,8 @@ import { useAuth } from "@/context/AuthContext";
 import { classifyMaterial, buildThreeFutureScenarios } from "@/lib/scenarioEngine";
 import { lookupItem, suggestItems, allItemNames } from "@/lib/itemLibrary";
 import { recordEvent } from "@/lib/progress";
+import { Buddy } from "@/components/Buddy";
+import { emojiFor } from "@/lib/itemEmoji";
 import { getFollowUpQuestions } from "@/lib/followUpQuestions";
 import { generateLearningReceipt } from "@/lib/receiptGenerator";
 import { saveReceipt } from "@/lib/receiptStore";
@@ -83,11 +85,10 @@ export default function ScanPage() {
     <div className="mx-auto max-w-3xl px-6 py-10 sm:py-14">
       {status === "idle" && (
         <div>
-          <div className="mb-8 text-center">
-            <h1 className="font-serif text-3xl font-semibold text-forest-900 sm:text-4xl">What are you throwing away?</h1>
-            <p className="mt-2 text-charcoal-600">
-              Type any item, even boba cups and AirPods. We&rsquo;ll compare reuse, recycling and disposal using sourced EPA data, and tell you when we don&rsquo;t have data.
-            </p>
+          <div className="mb-6 text-center">
+            <Buddy mood="think" className="mx-auto w-24" />
+            <h1 className="mt-2 font-serif text-4xl font-bold text-forest-700">What is it? 🤔</h1>
+            <p className="mt-1 text-lg text-charcoal-600">Type an item to find out where it goes.</p>
           </div>
           <form
             className="mx-auto flex max-w-lg flex-col gap-3 sm:flex-row"
@@ -101,9 +102,9 @@ export default function ScanPage() {
               id="typed-item"
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
-              placeholder="e.g. soda can, pizza box, banana peel"
+              placeholder="boba cup, airpods, pizza box…"
               list="item-names"
-              className="flex-1 border border-charcoal-300 px-4 py-3 text-sm focus:border-forest-600"
+              className="flex-1 rounded-full border-4 border-forest-300 bg-white px-5 py-3 text-lg focus:border-forest-500"
             />
             <Button type="submit" variant="primary">Explore</Button>
             <datalist id="item-names">
@@ -131,9 +132,9 @@ export default function ScanPage() {
               <button
                 key={e}
                 onClick={() => explore(e)}
-                className="border border-charcoal-300 bg-white px-3 py-1.5 text-sm text-charcoal-700 hover:border-forest-700 hover:text-forest-800"
+                className="rounded-full border-2 border-forest-200 bg-white px-4 py-2 text-base font-bold text-charcoal-700 shadow-sm hover:border-forest-500"
               >
-                {e}
+                {(() => { const it = lookupItem(e); return it ? emojiFor(it) : "🔎"; })()} {e}
               </button>
             ))}
           </div>

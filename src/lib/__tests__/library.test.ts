@@ -3,7 +3,7 @@ import { ITEM_LIBRARY, lookupItem, suggestItems } from "../itemLibrary";
 import { RULES, RULES_BY_ID, CORE_RULES } from "../rules";
 import { CRAFTS_BY_ID } from "../crafts";
 import { hasCraftArt } from "../../components/CraftArt";
-import { binFor, GAME_ITEMS, pickRound, blindSpot, isCorrect } from "../sortRush";
+import { binFor, GAME_ITEMS, pickRound, blindSpot, isCorrect, beltSeconds, starsFor } from "../sortRush";
 import { applyEvent, EMPTY_PROGRESS, planetStage } from "../progress";
 import { BADGES } from "../badges";
 import { buildTypedResult } from "../manualSelection";
@@ -79,5 +79,12 @@ describe("sort rush + progress", () => {
     expect(BADGES.find((b) => b.id === "streak-5")!.earned(p)).toBe(false);
     expect(planetStage(0)).toBe(0);
     expect(planetStage(12)).toBe(3);
+  });
+  it("belt speeds up but never below the floor; stars scale with score", () => {
+    expect(beltSeconds(0)).toBeGreaterThan(beltSeconds(5));
+    expect(beltSeconds(50)).toBe(3.2);
+    expect(starsFor(12, 12)).toBe(3);
+    expect(starsFor(0, 12)).toBe(0);
+    expect(starsFor(8, 12)).toBe(2);
   });
 });

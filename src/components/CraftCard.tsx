@@ -21,7 +21,7 @@ export function CraftCard({ craftId }: { craftId: string }) {
   }, [c]);
   if (!c) return null;
   return (
-    <section className="border border-charcoal-200 bg-white p-5" aria-labelledby={`craft-${c.id}`}>
+    <section className="rounded-3xl border-4 border-amber-200 bg-white p-5 shadow-md" aria-labelledby={`craft-${c.id}`}>
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-charcoal-500">Make something</p>
       <h3 id={`craft-${c.id}`} className="mt-1 font-serif text-xl font-semibold text-forest-900">{c.title}</h3>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">

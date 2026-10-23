@@ -49,3 +49,19 @@ export function blindSpot(answers: Answer[]): { ruleId: string; title: string; m
   if (!top) return null;
   return { ruleId: top[0], title: RULES_BY_ID[top[0]]?.title ?? top[0], misses: top[1] };
 }
+
+export const ROUND_SIZE = 12;
+export const START_LIVES = 3;
+
+/** Seconds an item takes to cross the belt. Starts gentle, speeds up, never below 3.2s. */
+export function beltSeconds(index: number): number {
+  return Math.max(3.2, 7.5 - index * 0.4);
+}
+
+export function starsFor(score: number, total: number): 0 | 1 | 2 | 3 {
+  const r = total ? score / total : 0;
+  if (r >= 0.9) return 3;
+  if (r >= 0.65) return 2;
+  if (r >= 0.35) return 1;
+  return 0;
+}
