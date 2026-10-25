@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { LearningReceipt } from "@/lib/types";
-import { Button } from "./Button";
 
 const ACTION_LABEL: Record<LearningReceipt["recommendedAction"], string> = {
   reduce: "Reduce",
@@ -21,9 +19,7 @@ interface LearningReceiptCardProps {
  * produces. Styled like a printed field-lab receipt rather than
  * another rounded "card," per the design brief.
  */
-export function LearningReceiptCard({ receipt, onSaveReflection, saved }: LearningReceiptCardProps) {
-  const [reflection, setReflection] = useState(receipt.reflectionAnswer ?? "");
-  const [submitted, setSubmitted] = useState(Boolean(receipt.reflectionAnswer));
+export function LearningReceiptCard({ receipt }: LearningReceiptCardProps) {
 
   return (
     <div className="mx-auto max-w-xl border border-charcoal-300 bg-paper-50 font-mono text-xs text-charcoal-700 shadow-sm">
@@ -96,37 +92,12 @@ export function LearningReceiptCard({ receipt, onSaveReflection, saved }: Learni
 
         <Row label="08 — Reflection">
           <p className="font-sans text-sm text-charcoal-700">{receipt.reflectionQuestion}</p>
-          {!submitted ? (
-            <form
-              className="mt-2 flex flex-col gap-2 sm:flex-row"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!reflection.trim()) return;
-                onSaveReflection?.(reflection.trim());
-                setSubmitted(true);
-              }}
-            >
-              <input
-                type="text"
-                value={reflection}
-                onChange={(e) => setReflection(e.target.value)}
-                placeholder="Your answer…"
-                className="flex-1 border border-charcoal-300 bg-white px-3 py-2 font-sans text-sm text-charcoal-800 focus:border-forest-600"
-              />
-              <Button type="submit" variant="primary" size="sm">
-                Save
-              </Button>
-            </form>
-          ) : (
-            <p className="mt-2 font-sans text-sm italic text-forest-700">
-              &ldquo;{reflection}&rdquo; — recorded.
-            </p>
-          )}
+          <p className="mt-1 font-sans text-xs italic text-charcoal-500">Think about it, or talk it over with a friend.</p>
         </Row>
       </div>
 
       <div className="border-t border-dashed border-charcoal-300 px-6 py-3 text-center text-[10px] uppercase tracking-wide text-charcoal-400">
-        {saved === "cloud" ? "Saved to your account ✅" : saved === "local" ? "Saved on this device ✅ (sign in to keep it everywhere)" : saved === "failed" ? "Couldn't save — your browser blocked storage" : "Write your answer and press Save"}
+        3R-AI · Sort It Right
       </div>
     </div>
   );
