@@ -25,6 +25,7 @@ export default function PlayPage() {
   const [mood, setMood] = useState<Mood>("happy");
   const [fb, setFb] = useState<{ ok: boolean; missed?: boolean; bin: Bin | null } | null>(null);
   const [hover, setHover] = useState<Bin | null>(null);
+  const [lifted, setLifted] = useState(false);
   const [popBin, setPopBin] = useState<{ bin: Bin; ok: boolean } | null>(null);
   const [progress, setProgress] = useState<Progress>(EMPTY_PROGRESS);
   const [newBadges, setNewBadges] = useState<Badge[]>([]);
@@ -84,7 +85,7 @@ export default function PlayPage() {
 
   const next = useCallback(() => {
     if (autoRef.current) { window.clearTimeout(autoRef.current); autoRef.current = null; }
-    setFb(null); setPopBin(null); setHover(null);
+    setFb(null); setPopBin(null); setHover(null); setLifted(false);
     const done = idx + 1 >= round.length || lives <= 0;
     if (done) { finish(progress); return; }
     setIdx(idx + 1);
@@ -131,6 +132,7 @@ export default function PlayPage() {
     const b = target.getBoundingClientRect();
     const dx = b.left + b.width / 2 - (a.left + a.width / 2);
     const dy = b.top + 10 - (a.top + a.height / 2);
+    setLifted(true);
     busyRef.current = true;
     inner.style.transition = "transform 0.42s cubic-bezier(.5,-0.3,.7,1)";
     inner.style.transform = `translate(${dx}px, ${dy}px) scale(0.35) rotate(25deg)`;
@@ -141,6 +143,7 @@ export default function PlayPage() {
     if (phase !== "play" || busyRef.current) return;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     dragRef.current = { sx: e.clientX, sy: e.clientY };
+    setLifted(true);
     if (innerRef.current) innerRef.current.style.transition = "none";
   }
   function onMove(e: React.PointerEvent) {
@@ -159,6 +162,7 @@ export default function PlayPage() {
     else if (innerRef.current) {
       innerRef.current.style.transition = "transform 0.25s ease";
       innerRef.current.style.transform = "translate(0,0)";
+      window.setTimeout(() => setLifted(false), 260);
     }
   }
   function tapBin(bin: Bin) {
@@ -254,13 +258,13 @@ export default function PlayPage() {
       </div>
 
       {/* Sorting center */}
-      <div className="relative mt-3 h-56 overflow-hidden rounded-3xl border-4 border-charcoal-800 bg-gradient-to-b from-sky-200 to-sky-50 shadow-lg sm:h-64">
+      <div className={`relative mt-3 h-56 ${lifted ? "z-30 overflow-visible" : "overflow-hidden"} rounded-3xl border-4 border-charcoal-800 bg-gradient-to-b from-sky-200 to-sky-50 shadow-lg sm:h-64`}>
         <div className="absolute left-5 top-4 h-10 w-10 rounded-full bg-amber-300 shadow-[0_0_30px_8px_rgba(252,211,77,0.6)]" aria-hidden />
         <div className="absolute right-6 top-5 text-3xl opacity-80" aria-hidden>☁️</div>
         <div className="absolute left-1/3 top-8 text-2xl opacity-70" aria-hidden>☁️</div>
         <div className="absolute inset-x-0 top-0 mx-auto w-44 rounded-b-2xl bg-forest-600 py-1 text-center font-serif text-sm font-bold tracking-wide text-white shadow-md">SORTING CENTER</div>
         {/* belt */}
-        <div ref={beltRef} className="absolute inset-x-0 bottom-0 h-16 border-t-4 border-charcoal-900 bg-charcoal-700">
+        <div ref={beltRef} className="absolute inset-x-0 bottom-0 h-16 rounded-b-[1.2rem] border-t-4 border-charcoal-900 bg-charcoal-700 overflow-hidden">
           <div className="anim-belt-stripes absolute inset-0" aria-hidden />
           <div className="absolute inset-x-0 top-0 h-2 bg-charcoal-500/70" aria-hidden />
         </div>

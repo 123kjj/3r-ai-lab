@@ -2,23 +2,33 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import { LearningReceipt } from "./types";
 
-/**
- * Persists a Learning Receipt to the existing Firestore architecture
- * (users/{uid}/receipts/{id}), reusing the same database already used
- * for impact stats and action history — no new persistence layer.
- * No-ops (returns false) when Firestore isn't configured or no user
- * is signed in, so demo mode never silently fails.
- */
-export async function saveReceipt(uid: string | null, receipt: LearningReceipt): Promise<boolean> {
-  if (!uid || !db) return false;
+export type SaveStatus = "none" | "cloud" | "local" | "failed";
+const KEY = "3r-receipts-v1";
+
+function saveLocal(receipt: LearningReceipt): boolean {
   try {
-    await addDoc(collection(db, "users", uid, "receipts"), {
-      ...receipt,
-      savedAt: serverTimestamp(),
-    });
+    const list = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    list.unshift({ ...receipt, savedAt: Date.now() });
+    localStorage.setItem(KEY, JSON.stringify(list.slice(0, 50)));
     return true;
-  } catch (err) {
-    console.error("saveReceipt failed:", err);
+  } catch {
     return false;
   }
+}
+
+/**
+ * Always saves on this device first (works signed out), then also tries
+ * the cloud (users/{uid}/receipts) when signed in. Never silently fails.
+ */
+export async function saveReceipt(uid: string | null, receipt: LearningReceipt): Promise<SaveStatus> {
+  const local = saveLocal(receipt);
+  if (uid && db) {
+    try {
+      await addDoc(collection(db, "users", uid, "receipts"), { ...receipt, savedAt: serverTimestamp() });
+      return "cloud";
+    } catch (err) {
+      console.error("saveReceipt cloud failed:", err);
+    }
+  }
+  return local ? "local" : "failed";
 }

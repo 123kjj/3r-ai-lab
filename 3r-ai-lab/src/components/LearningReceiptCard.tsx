@@ -13,7 +13,7 @@ const ACTION_LABEL: Record<LearningReceipt["recommendedAction"], string> = {
 interface LearningReceiptCardProps {
   receipt: LearningReceipt;
   onSaveReflection?: (answer: string) => void;
-  saved?: boolean;
+  saved?: "none" | "cloud" | "local" | "failed";
 }
 
 /**
@@ -126,7 +126,7 @@ export function LearningReceiptCard({ receipt, onSaveReflection, saved }: Learni
       </div>
 
       <div className="border-t border-dashed border-charcoal-300 px-6 py-3 text-center text-[10px] uppercase tracking-wide text-charcoal-400">
-        {saved ? "Saved to your account" : "Sign in to save this receipt"}
+        {saved === "cloud" ? "Saved to your account ✅" : saved === "local" ? "Saved on this device ✅ (sign in to keep it everywhere)" : saved === "failed" ? "Couldn't save — your browser blocked storage" : "Write your answer and press Save"}
       </div>
     </div>
   );

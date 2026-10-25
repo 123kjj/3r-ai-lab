@@ -24,7 +24,7 @@ interface ResultViewProps {
   onDescribe: (description: string) => void;
   onSaveReflection: (answer: string) => void;
   actionTaken: boolean;
-  receiptSaved: boolean;
+  receiptSaved: import("@/lib/receiptStore").SaveStatus;
 }
 
 export function ResultView({

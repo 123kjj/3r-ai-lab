@@ -43,7 +43,7 @@ export default function QuizPage() {
         </h1>
         <p className="mt-2 text-sm text-charcoal-600">
           Answers reflect what most U.S. curbside programs do; your city may differ.{" "}
-          {saved ? "Your anonymous answers were saved." : "Your answers were not saved."}
+          {saved ? "Your anonymous answers were saved." : "Your score is saved on this device. (Shared class results are offline right now.)"}
         </p>
         <ul className="mt-6 space-y-4">
           {QUIZ_ITEMS.map((q) => {

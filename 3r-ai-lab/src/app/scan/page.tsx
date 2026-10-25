@@ -15,7 +15,7 @@ import { Buddy } from "@/components/Buddy";
 import { emojiFor } from "@/lib/itemEmoji";
 import { getFollowUpQuestions } from "@/lib/followUpQuestions";
 import { generateLearningReceipt } from "@/lib/receiptGenerator";
-import { saveReceipt } from "@/lib/receiptStore";
+import { saveReceipt, SaveStatus } from "@/lib/receiptStore";
 
 type Status = "idle" | "followup" | "result";
 
@@ -28,7 +28,7 @@ export default function ScanPage() {
   const [result, setResult] = useState<AnalyzeItemResult | null>(null);
   const [followUpAnswers, setFollowUpAnswers] = useState<FollowUpAnswers>({});
   const [actionTaken, setActionTaken] = useState(false);
-  const [receiptSaved, setReceiptSaved] = useState(false);
+  const [receiptSaved, setReceiptSaved] = useState<SaveStatus>("none");
   const { recordAction } = useImpact();
   const { user } = useAuth();
 
@@ -50,7 +50,7 @@ export default function ScanPage() {
     setResult(r);
     setFollowUpAnswers({});
     setActionTaken(false);
-    setReceiptSaved(false);
+    setReceiptSaved("none");
     setStatus(getFollowUpQuestions(classifyMaterial(r.category, r.itemName).id).length > 0 ? "followup" : "result");
   }, []);
 

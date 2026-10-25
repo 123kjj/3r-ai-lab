@@ -89,6 +89,7 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
     const userRef = doc(db, "users", user.uid);
 
     (async () => {
+     try {
       const snap = await getDoc(userRef);
       if (!snap.exists()) {
         await setDoc(userRef, {
@@ -102,6 +103,10 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
           challengeDay: 1,
         });
       }
+     } catch (e) {
+      console.warn("Firestore unavailable, using on-device data:", e);
+      setLoading(false);
+     }
     })();
 
     const unsubUser = onSnapshot(userRef, (snap) => {
@@ -117,7 +122,7 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
         });
       }
       setLoading(false);
-    });
+    }, () => setLoading(false));
 
     const actionsRef = query(
       collection(db, "users", user.uid, "actions"),
@@ -143,7 +148,7 @@ export function ImpactProvider({ children }: { children: ReactNode }) {
           } as UserAction;
         })
       );
-    });
+    }, () => {});
 
     return () => {
       unsubUser();

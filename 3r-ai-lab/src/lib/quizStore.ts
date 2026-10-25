@@ -26,9 +26,10 @@ export function attemptNumber(): number {
 
 /** Anonymous: stores answers, score, a random browser id and attempt number. No identity. */
 export async function submitQuiz(answers: Record<string, BinChoice>): Promise<boolean> {
+  const attempt = attemptNumber();
+  try { localStorage.setItem("3r-attempts", String(attempt)); localStorage.setItem("3r-last-quiz", JSON.stringify({ answers, score: scoreQuiz(answers), attempt })); } catch {}
   if (!isFirebaseConfigured || !db) return false;
   try {
-    const attempt = attemptNumber();
     await addDoc(collection(db, "quizResponses"), {
       answers,
       score: scoreQuiz(answers),
@@ -36,7 +37,6 @@ export async function submitQuiz(answers: Record<string, BinChoice>): Promise<bo
       attempt,
       createdAt: serverTimestamp(),
     });
-    try { localStorage.setItem("3r-attempts", String(attempt)); } catch {}
     return true;
   } catch {
     return false;
