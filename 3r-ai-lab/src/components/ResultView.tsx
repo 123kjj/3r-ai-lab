@@ -9,7 +9,6 @@ import { ScenarioComparison } from "./ScenarioComparison";
 import { LearningReceiptCard } from "./LearningReceiptCard";
 import { ImpactEstimator } from "./ImpactEstimator";
 import { CraftCard } from "./CraftCard";
-import Link from "next/link";
 import { RULES_BY_ID } from "@/lib/rules";
 import { lookupItem } from "@/lib/itemLibrary";
 import { emojiFor } from "@/lib/itemEmoji";
@@ -166,15 +165,7 @@ export function ResultView({
       </details>
 
       <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-center">
-        <Button variant="primary" size="lg" className="w-full sm:w-auto" onClick={() => onTookAction(estimateKg)} disabled={actionTaken}>
-          {actionTaken ? "Saved ✅" : "I did it! 🌟"}
-        </Button>
-        {actionTaken && (
-          <Link href="/impact" className="anim-pop rounded-lg bg-amber-100 px-4 py-3 text-center text-base font-bold text-amber-900 hover:bg-amber-200">
-            +1 logged! See my progress →
-          </Link>
-        )}
-        <Button variant="secondary" size="lg" className="w-full sm:w-auto" onClick={onScanAnother}>
+        <Button variant="primary" size="lg" className="w-full sm:w-auto" onClick={onScanAnother}>
           Check another 🔍
         </Button>
       </div>
